@@ -34,7 +34,10 @@ const fetchOptions = {
 };
 
 const [{ data: page }, { data: genres }, { data: labels }] = await Promise.all([
-  useFetch<ShowcasePage>(`${filmsApi}/showcases/showcases/mainpage/`,fetchOptions),
+  useFetch<ShowcasePage>(
+    `${filmsApi}/showcases/showcases/mainpage/`,
+    fetchOptions
+  ),
   useFetch<Genre[]>(`${filmsApi}/metadata/genres/`, fetchOptions),
   useFetch<Label[]>(`${filmsApi}/metadata/labels/`, fetchOptions),
 ]).catch((error) => {
@@ -59,6 +62,9 @@ const getSlides = computed(() => {
   padding: 1.25rem;
   background-color: white;
   border-radius: 1.25rem;
+  @media (max-width: 480px) {
+    padding: 0.625rem;
+  }
 }
 .main-page-title {
   margin: 0;
@@ -77,6 +83,16 @@ const getSlides = computed(() => {
   margin-top: 1.25rem;
   padding: 0;
   list-style-type: none;
+
+  @media (max-width: 1280px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  @media (max-width: 920px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
 }
 .main-page-card {
   display: flex;
