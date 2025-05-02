@@ -25,15 +25,24 @@
 
 <script lang="ts" setup>
 const filmsApi = useRuntimeConfig().public.filmsApi;
+const fetchOptions = {
+  credentials: "include" as const,
+  headers: {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+  },
+};
 
-// Может встать сайт из-за отсутствия данных или долгих ответов от сервера
 const [{ data: page }, { data: genres }, { data: labels }] = await Promise.all([
-  useFetch<ShowcasePage>(`${filmsApi}/showcases/showcases/mainpage/`),
-  useFetch<Genre[]>(`${filmsApi}/metadata/genres/`),
-  useFetch<Label[]>(`${filmsApi}/metadata/labels/`),
+  useFetch<ShowcasePage>(`${filmsApi}/showcases/showcases/mainpage/`,fetchOptions),
+  useFetch<Genre[]>(`${filmsApi}/metadata/genres/`, fetchOptions),
+  useFetch<Label[]>(`${filmsApi}/metadata/labels/`, fetchOptions),
 ]).catch((error) => {
-  console.error("Ой что-то пошло не так", error);
-  throw error;
+  console.error("Error fetching data:", error);
+  throw createError({
+    statusCode: 500,
+    message: "Failed to fetch data from API",
+  });
 });
 
 const getSlides = computed(() => {
