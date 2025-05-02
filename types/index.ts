@@ -1,30 +1,36 @@
-export interface Genre {
+export interface BaseEntity {
     oid: string
     name: string
+    [key: string]: string
 }
-export interface Label {
-    oid: string
-    name: string
+
+export interface Genre extends BaseEntity {}
+
+export interface Label extends BaseEntity {
+    left_color: string
+    center_color: string
+    right_color: string
 }
 
 export interface Asset {
-    asset_type: string;
-    resize_url: string;
+    asset_type: string
+    resize_url: string
 }
 
 export interface Title {
-    title: string;
-    synopsis: string;
-    genres: string[];
-    labels: string[];
-    assets: Asset[];
+    title: string
+    synopsis: string
+    genres: string[]
+    labels: string[]
+    assets: Asset[]
 }
 
 export interface Slide {
-    title: Title;
+    id?: number
+    title: Title
 }
 
 export interface ShowcasePage {
-    name: string;
-    slides: Slide[];
+    name: string
+    slides: Slide[]
 }

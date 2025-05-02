@@ -1,0 +1,16 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(119, 164, 247);
+  padding: 1rem;
+  border-radius: 0.5rem;
+}
+.card-image {
+  display: block;
+  max-width: 100%;
+  object-fit: cover;
+  margin: 0 auto;
+}
+.card-under {
+  margin-top: auto;
+}
