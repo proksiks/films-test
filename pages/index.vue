@@ -20,7 +20,7 @@
       </li>
     </ul>
   </section>
-  <div v-else>Ошибка получения данных</div>
+  <div v-else>Ошибка получения данных || CORS error</div>
 </template>
 
 <script lang="ts" setup>
@@ -36,14 +36,13 @@ const [{ data: page }, { data: genres }, { data: labels }] = await Promise.all([
   throw error;
 });
 
-const getSlides = (): ShowcasePage | null => {
-  return page.value?.slides.map((item, i) => {
-    return {
-      ...item,
-      id: i,
-    };
-  });
-};
+const getSlides = computed(() => {
+  if (!page.value) return [];
+  return page.value.slides.map((item, i) => ({
+    ...item,
+    id: i,
+  }));
+});
 </script>
 
 <style scoped>

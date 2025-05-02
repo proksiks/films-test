@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <picture class="card-cover">
-      <nuxt-link :to="`film/${data}`">
+      <nuxt-link :to="`film/${data.id}`">
         <img
           class="card-image"
           :src="replaceImageSize(data.title.assets, 'poster')"
