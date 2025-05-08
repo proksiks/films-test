@@ -1,18 +1,24 @@
 <template>
-  <section class="main-page" v-if="page">
-    <h1 class="main-page-title">{{ page?.name }}</h1>
+  <div v-if="store.isLoading" class="loading">
+    Загрузка...
+  </div>
+  <div v-else-if="store.error" class="error">
+    {{ store.error }}
+  </div>
+  <section v-else-if="store.page" class="main-page">
+    <h1 class="main-page-title">{{ store.page.name }}</h1>
     <ul class="main-page-cards">
-      <li class="main-page-card" v-for="card in getSlides">
+      <li class="main-page-card" v-for="card in store.getSlides" :key="card.id">
         <card-ui :data="card">
           <template #under>
             <ul class="tags">
-              <li class="tag tag_green" v-for="genre in card.title.genres">
-                {{ mapEntries(genres, genre)?.name }}
+              <li class="tag tag_green" v-for="genre in card.title.genres" :key="genre">
+                {{ mapDeepEntries(store.genres, genre)?.name }}
               </li>
             </ul>
             <ul class="tags">
-              <li class="tag tag_red" v-for="label in card.title.labels">
-                {{ mapEntries(labels, label)?.name }}
+              <li class="tag tag_red" v-for="label in card.title.labels" :key="label">
+                {{ mapDeepEntries(store.labels, label)?.name }}
               </li>
             </ul>
           </template>
@@ -20,44 +26,36 @@
       </li>
     </ul>
   </section>
-  <div v-else>Ошибка получения данных || CORS error</div>
+  <div v-else class="error">
+    Ошибка получения данных
+  </div>
 </template>
 
 <script lang="ts" setup>
-const filmsApi = useRuntimeConfig().public.filmsApi;
-const fetchOptions = {
-  credentials: "include" as const,
-  headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  },
-};
+import { mapDeepEntries } from '~/utils/mapDeepEntries';
+import { useShowcaseStore } from '~/stores/showcase';
 
-const [{ data: page }, { data: genres }, { data: labels }] = await Promise.all([
-  useFetch<ShowcasePage>(
-    `${filmsApi}/showcases/showcases/mainpage/`,
-    fetchOptions
-  ),
-  useFetch<Genre[]>(`${filmsApi}/metadata/genres/`, fetchOptions),
-  useFetch<Label[]>(`${filmsApi}/metadata/labels/`, fetchOptions),
-]).catch((error) => {
-  console.error("Error fetching data:", error);
-  throw createError({
-    statusCode: 500,
-    message: "Failed to fetch data from API",
-  });
-});
+const store = useShowcaseStore();
 
-const getSlides = computed(() => {
-  if (!page.value) return [];
-  return page.value.slides.map((item, i) => ({
-    ...item,
-    id: i,
-  }));
+onMounted(async () => {
+  await store.fetchShowcaseData();
 });
 </script>
 
 <style scoped>
+.loading,
+.error {
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.25rem;
+  background-color: white;
+  border-radius: 1.25rem;
+}
+
+.error {
+  color: rgb(220, 38, 38);
+}
+
 .main-page {
   padding: 1.25rem;
   background-color: white;
